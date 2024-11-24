@@ -1,9 +1,17 @@
 package stuff;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import fileio.CardInput;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+
 public class GameState {
     private int playerTurn;
     private int overallTurn;
     private int mana_to_receive = 1;
+    //private int gamesPlayed;
     public GameState(int playerTurn){
         this.playerTurn = playerTurn;
         overallTurn = 1;
@@ -43,7 +51,7 @@ public class GameState {
             return 2; //eroare 2 Attacker card has already attacked this turn.
         else if(attacker.getFrozen() == 1)
             return 3; //eroare 3 Attacker card is frozen
-        else if(attacked_player.getNrOfCardsFront() > 0 && attacked.getPosition() == 0){
+        else if(attacked_player.getNrOfCardsFront() > 0 && attacked.getPosition() == 1 &&  attacked.check_is_tank(attacked_player.getFrontRow()) == 1 && attacked.getIs_tank() == 0){
             return 4; //eroare 4 Attacked card is not of type 'Tank’.
         }
         attacked.setHealth(attacked.getHealth() - attacker.getAttackDamage());
@@ -74,6 +82,22 @@ public class GameState {
             player2.getBackRow().get(i).setAttacked_this_turn(0);
         }
     }
+    public void resetFrozen_1(Player player1){
+        for(int i = 0; i < player1.getFrontRow().size(); i++){
+            player1.getFrontRow().get(i).setFrozen(0);
+        }
+        for(int i = 0; i < player1.getBackRow().size(); i++){
+            player1.getBackRow().get(i).setFrozen(0);
+        }
+    }
+    public void resetFrozen_2( Player player2){
+        for(int i = 0; i < player2.getFrontRow().size(); i++){
+            player2.getFrontRow().get(i).setFrozen(0);
+        }
+        for(int i = 0; i < player2.getBackRow().size(); i++){
+            player2.getBackRow().get(i).setFrozen(0);
+        }
+    }
     public Minion getCardAtThisPosition(Player player1, Player player2, int x, int y){
         if(x == 0){
             if(y >= 0 && player2.getNrOfCardsBack() > y)
@@ -102,4 +126,20 @@ public class GameState {
         else
             return null;
     }
+    public int attackHero(Minion attacker, Erou hero, Player attacked_player){
+        if(attacker.getAttacked_this_turn() == 1)
+            return 2; //eroare 2 Attacker card has already attacked this turn.
+        else if(attacker.getFrozen() == 1)
+            return 3; //eroare 3 Attacker card is frozen
+        else if(attacked_player.getNrOfCardsFront() > 0 &&  attacker.check_is_tank(attacked_player.getFrontRow()) == 1){
+            return 4; //eroare 4 Attacked card is not of type 'Tank’.
+        }
+        hero.setHealth(hero.getHealth() - attacker.getAttackDamage());
+        attacker.setAttacked_this_turn(1);
+        return 0;
+    }
+    public void shuffle(int seed, ArrayList<Minion> deck){
+        Collections.shuffle(deck, new Random(seed));
+    }
+
 }

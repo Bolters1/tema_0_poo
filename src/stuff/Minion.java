@@ -2,6 +2,8 @@ package stuff;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.ArrayList;
+
 public class Minion {
     private int mana;
     private int health;
@@ -17,11 +19,15 @@ public class Minion {
     private int ability; // 0 fata abilitati si 1-4 abilitatile pe rand
     @JsonIgnore
     private int frozen; // 0 == unfrozen si 1 == frozen
+    @JsonIgnore
+    private int is_tank = 0;
     public void assign_position(Minion minion){
         if(minion.name.equals("Sentinel") || minion.name.equals("Berserker"))
             minion.position = 0;
-        else if(minion.name.equals("Goliath") || minion.name.equals("Warden"))
+        else if(minion.name.equals("Goliath") || minion.name.equals("Warden")) {
             minion.position = 1;
+            is_tank = 1;
+        }
         else if(minion.name.equals("Miraj")){
             minion.position = 1;
             minion.ability = 1;
@@ -118,5 +124,16 @@ public class Minion {
 
     public int getAttacked_this_turn() {
         return attacked_this_turn;
+    }
+
+    public int getIs_tank() {
+        return is_tank;
+    }
+    public int check_is_tank(ArrayList<Minion> row){
+        for(int i = 0; i < row.size(); i++){
+            if(row.get(i).is_tank == 1)
+                return 1;
+        }
+        return 0;
     }
 }

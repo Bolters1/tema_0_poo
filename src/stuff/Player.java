@@ -115,4 +115,12 @@ public class Player {
     public int getWins() {
         return wins;
     }
+    public ArrayList<Minion> getFrozenCards(ArrayList<Minion> row){
+        ArrayList<Minion> frozen = new ArrayList<Minion>();
+        for(int i = 0; i < row.size(); i++){
+            if(row.get(0).getFrozen() == 1)
+                frozen.add(row.get(i));
+        }
+        return frozen;
+    }
 }
